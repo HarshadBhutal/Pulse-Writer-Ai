@@ -4,9 +4,12 @@ import feedparser
 from newspaper import Article, Config
 from googlenewsdecoder import gnewsdecoder
 from sentence_transformers import SentenceTransformer, util
-import json
 
-def scrapping():
+
+Top_n=5
+
+def News_Scrap():
+        
     model=SentenceTransformer("all-MiniLM-L6-v2")
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
@@ -17,8 +20,10 @@ def scrapping():
     url="https://news.google.com/rss/search?q=India&hl=en-IN&gl=IN&ceid=IN:en"
     feed=feedparser.parse(url)
 
-    for entry in feed.entries[:1]:
-        
+    trending_news=[]
+
+    for entry in feed.entries[:Top_n]:
+        value=0
         title=entry.title
         re_title=" "
         for i in range(len(title)):
@@ -30,17 +35,17 @@ def scrapping():
 
         schema={"Topic":re_title,"Sources":[]}
 
-        print("Topic: ",re_title)
+        
 
         url_1=f"https://news.google.com/rss/search?q={query}"
         feed_1=feedparser.parse(url_1)
 
-        for entry_1 in feed_1.entries[:3]:
+        for entry_1 in feed_1.entries[:4]:
 
             title=entry_1.title
             for i in range(len(title)):
-              if title[-i]=="-":
-                val=i
+                if title[-i]=="-":
+                    val=i
                 break
             re_title_1=title[:-val]
 
@@ -58,23 +63,25 @@ def scrapping():
                     article.download()
                     article.parse()
                     if article.text:
-                      text=article.text.replace("\n\n","\n")
-                      text=text.replace("\"","")
-                      schema["Sources"].append({"publisher":title[-val:],"text":text})
-                      # print(re_title_1,"/n")
-                      # print(entry_1.link,"\n")
-                      # print(real_url,"\n")
-                      
+                        print("Topic: ",re_title)
+                        text=article.text.replace("\n\n","\n")
+                        text=text.replace("\"","")
+                        schema["Sources"].append({"publisher":title[-val:],"text":text})
+                        value+=1
+
                     else:
                         continue
+
             except Exception:
                     continue
-        
-            # print("-" * 40) 
-            
             time.sleep(random.uniform(1, 3))
 
-        return schema 
+        print(value)
+        trending_news.append(schema)   
+
+    print(trending_news)
+    return trending_news
+       
 
     
 
