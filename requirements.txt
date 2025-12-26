@@ -1,0 +1,8 @@
+sqlmodel
+fastapi[standard]
+requests
+feedparser
+newspaper3k
+googlenewsdecoder
+sentence-transformers
+apscheduler

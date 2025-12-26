@@ -1,4 +1,5 @@
 import time
+import math
 import random
 import feedparser
 from newspaper import Article, Config
@@ -7,9 +8,10 @@ from sentence_transformers import SentenceTransformer, util
 
 
 Top_n=5
+next_n=3
 
 def News_Scrap():
-        
+              
     model=SentenceTransformer("all-MiniLM-L6-v2")
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
@@ -19,43 +21,35 @@ def News_Scrap():
 
     url="https://news.google.com/rss/search?q=India&hl=en-IN&gl=IN&ceid=IN:en"
     feed=feedparser.parse(url)
-
     trending_news=[]
 
     for entry in feed.entries[:Top_n]:
         value=0
         title=entry.title
-        re_title=" "
-        for i in range(len(title)):
-            if title[-i]=="-":
-                val=i
-                break
-        re_title=title[:-val]
-        query=re_title.replace(" ","+")
-
-        schema={"Topic":re_title,"Sources":[]}
-
-        
+        title=title.rsplit("-")
+        query=title[0].replace(" ","+")
+        schema={"Topic":title[0],"Sources":[]}
+        print("Topic",title[0])
 
         url_1=f"https://news.google.com/rss/search?q={query}"
         feed_1=feedparser.parse(url_1)
 
-        for entry_1 in feed_1.entries[:4]:
-
-            title=entry_1.title
-            for i in range(len(title)):
-                if title[-i]=="-":
-                    val=i
-                break
-            re_title_1=title[:-val]
-
-            title_emd=model.encode(re_title,convert_to_tensor=True)
-            title_1_emd=model.encode(re_title_1,convert_to_tensor=True)
-            Score=util.cos_sim(title_emd,title_1_emd)[0]
-
-            if Score<=0.5:
-                continue
+        for entry_1 in feed_1.entries[:next_n]:
             
+            title_1=entry_1.title
+            title_1=title_1.rsplit("-")
+            
+            title_emd=model.encode(title[0],convert_to_tensor=True)
+            title_1_emd=model.encode(title_1[0],convert_to_tensor=True)
+            Score=util.cos_sim(title_emd,title_1_emd)[0]
+            score = Score.item()
+            print(Score)
+            
+            if (score>0.65):
+                pass
+            else:
+                continue
+
             real_url = gnewsdecoder(entry_1.link)
 
             try:
@@ -63,22 +57,25 @@ def News_Scrap():
                     article.download()
                     article.parse()
                     if article.text:
-                        print("Topic: ",re_title)
-                        text=article.text.replace("\n\n","\n")
-                        text=text.replace("\"","")
-                        schema["Sources"].append({"publisher":title[-val:],"text":text})
+                        print("Topic: ",title_1[0])
+                        schema["Sources"].append({"publisher":title_1[1],"text":article.text})
                         value+=1
-
                     else:
+                        print("enone")
                         continue
 
             except Exception:
+                    print("none")
                     continue
             time.sleep(random.uniform(1, 3))
 
-        print(value)
-        trending_news.append(schema)   
-
+        if schema["Sources"]==[]:
+                continue
+        
+        print("Total sources",value)
+        trending_news.append(schema)
+        print(40*"-")
+        
     print(trending_news)
     return trending_news
        

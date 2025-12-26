@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pulse Writer AI – Trending News</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="logo-orb">
+          <div class="logo-orb-inner">PW</div>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Pulse Writer AI</span>
+          <span class="logo-sub">AI‑summarised headlines from trusted sources</span>
+        </div>
+      </div>
+
+      <div class="nav-center">
+        <div class="search-shell">
+          <span class="search-icon">🔍</span>
+          <input
+            id="searchInput"
+            class="search-input"
+            type="text"
+            placeholder="Search titles or summaries..."
+          />
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <span class="nav-label">Theme</span>
+        <button id="themeToggle" class="theme-toggle">
+          <div class="theme-thumb">
+            <span id="themeIcon">🌙</span>
+          </div>
+        </button>
+      </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <button class="hero-badge hero-badge-trending">
+            <span class="hero-badge-icon">📈</span>
+            <span class="hero-badge-text">Latest Trending Topics</span>
+          </button>
+         <h1 class="hero-title">
+          AI‑Powered News
+         <br />
+         <span class="hero-highlight-line">From Trending Topics</span>
+         </h1>
+         <p class="hero-subtitle">
+            Stay informed with expertly curated news blogs generated from the most trending
+            topics across the web.
+         </p>
+      </section>
+
+
+      <section class="cards-grid" id="cardsContainer">
+       <!-- cards injected by JS -->
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Order is important: data.js BEFORE index.js so articles exist -->
+  <script src="js/data.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
