@@ -36,6 +36,18 @@ const idParam = params.get("id");
 
 const articles = Array.isArray(window.PULSE_ARTICLES) ? window.PULSE_ARTICLES : [];
 
+if (!articles.length) {
+  const stored = localStorage.getItem("pulse-articles");
+  if (stored) {
+    try {
+      articles = JSON.parse(stored);
+      window.PULSE_ARTICLES = articles;
+    } catch (e) {
+      console.error("Failed to parse stored articles", e);
+    }
+  }
+}
+
 function renderArticle(article) {
   if (!article) {
     titleEl.textContent = "Article not found";
@@ -64,7 +76,6 @@ function renderArticle(article) {
     sourcesEl.appendChild(li);
   }
 }
-
 
 
 function findArticleById(idParam) {

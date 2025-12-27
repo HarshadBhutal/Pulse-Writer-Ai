@@ -37,20 +37,13 @@ function initArticles() {
 
 document.addEventListener("pulse-articles-loaded", initArticles);
 
-
-// data.js must dispatch this after it sets window.PULSE_ARTICLES
-document.addEventListener("pulse-articles-loaded", initArticles);
-
-// later you can replace with FastAPI fetch:
-// async function loadFromApi() { ... }  (omitted here for clarity)
-
 // ---------- RENDER ----------
 const cardsContainer = document.getElementById("cardsContainer");
 const searchInput = document.getElementById("searchInput");
 
 function makePreview(text, maxWords = 26) {
   if (text == null) return "";
-  const str = String(text); // make sure it's a string
+  const str = String(text);
   const words = str.split(/\s+/);
   if (words.length <= maxWords) return str;
   return words.slice(0, maxWords).join(" ") + "…";
@@ -82,7 +75,7 @@ function createCard(article) {
     `;
 
   card.addEventListener("click", () => {
-    window.location.href = `article.html?id=${encodeURIComponent(article.Id)}`;
+    window.location.href = `article.html?id=${(article.Id)}`;
   });
 
   return card;

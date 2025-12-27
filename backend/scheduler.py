@@ -3,12 +3,11 @@ from llm import llm
 from models import Articles
 
 
-engine=create_engine("sqlite:///../data/data.db")
+engine=create_engine("sqlite:///data.db")
 
 def fetch_trending_topics():
     print("Scraping started...")
     llm_data=llm()
-    response_data=[]
     for item in llm_data:
 
         with Session(engine) as session:
@@ -30,12 +29,5 @@ def fetch_trending_topics():
             session.add(db_article)
             session.commit()
             session.refresh(db_article)
-            response_data.append({
-                "id": db_article.id,
-                "Topic": db_article.Topic,
-                "Title": db_article.Title,
-                "Text": item["Facts"], 
-                "Created_at": db_article.Created_at
-            })
     print("Scraping finished and database updated.")
 
