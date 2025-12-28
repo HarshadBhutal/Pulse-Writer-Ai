@@ -1,11 +1,15 @@
+import os
 import httpx
-from sqlmodel import SQLModel,create_engine,Session,select
+from models import Articles
+from dotenv import load_dotenv
 from fastapi import FastAPI,staticfiles
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.background import BackgroundScheduler
 from scheduler import fetch_trending_topics,engine
-from models import Articles
+from sqlmodel import SQLModel,Session,select
+from apscheduler.schedulers.background import BackgroundScheduler
+
+load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,8 +25,8 @@ async def lifespan(app: FastAPI):
     
     try:
         async with httpx.AsyncClient() as client:
-            await client.post("http://localhost:11434/api/generate", 
-                             json={"model": "your-model-name", "keep_alive": 0})
+            await client.post(os.getenv("llm"), 
+                             json={"model": "llama3.2", "keep_alive": 0})
         print("INFO: Ollama model unloaded.")
 
     except Exception as e:
@@ -38,6 +42,7 @@ origins = [
 ]
 
 app.add_middleware(
+    
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,

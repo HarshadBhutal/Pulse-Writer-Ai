@@ -1,4 +1,3 @@
-// ---------- THEME ----------
 const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -25,7 +24,33 @@ themeToggle.addEventListener("click", () => {
   setTheme(current === "light" ? "dark" : "light");
 });
 
-// ---------- ARTICLE ----------
+function formatDate(isoString) {
+  if (!isoString) return "Today";
+  
+  const date = new Date(isoString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const articleDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  
+  if (articleDate.getTime() === today.getTime()) {
+    return "Today";
+  }
+  
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (articleDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  }
+  
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+}
+
+
 const titleEl = document.getElementById("articleTitle");
 const textEl = document.getElementById("articleText");
 const sourcesEl = document.getElementById("articleSources");
@@ -60,7 +85,7 @@ function renderArticle(article) {
 
   titleEl.textContent = article.Title;
   textEl.textContent = article.Text;
-  dateEl.textContent = article.Created_at || "Today";
+  dateEl.textContent = formatDate(article.Created_at);
 
   sourcesEl.innerHTML = "";
   const src = article.Sources_used;
@@ -92,7 +117,6 @@ function initArticle() {
   renderArticle(article);
 }
 
-// if data already present (navigation from same session)
 if (window.PULSE_ARTICLES && window.PULSE_ARTICLES.length > 0) {
   initArticle();
 } else {

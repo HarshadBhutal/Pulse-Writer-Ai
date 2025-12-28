@@ -1,14 +1,16 @@
+import os
 import time
-import math
 import random
 import feedparser
+from dotenv import load_dotenv
 from newspaper import Article, Config
 from googlenewsdecoder import gnewsdecoder
 from sentence_transformers import SentenceTransformer, util
 
+load_dotenv()
 
-Top_n=5
-next_n=3
+Topics_No=5
+Articles_No=4
 
 def News_Scrap():
               
@@ -19,64 +21,61 @@ def News_Scrap():
     config.browser_user_agent = user_agent
     config.request_timeout = 10
 
-    url="https://news.google.com/rss/search?q=India&hl=en-IN&gl=IN&ceid=IN:en"
-    feed=feedparser.parse(url)
+    T_url=os.getenv("T_url")
+    T_feed=feedparser.parse(T_url)
     trending_news=[]
 
-    for entry in feed.entries[:Top_n]:
-        value=0
-        title=entry.title
-        title=title.rsplit("-")
-        query=title[0].replace(" ","+")
-        schema={"Topic":title[0],"Sources":[]}
-        print("Topic",title[0])
+    for Topic in T_feed.entries[:Topics_No]:
+        Sources=0
+        T_title=Topic.title
+        T_title=T_title.rsplit("-")
+        query=T_title[0].replace(" ","+")
+        schema={"Topic":T_title[0],"Sources":[]}
+        print("Topic",T_title[0])
 
-        url_1=f"https://news.google.com/rss/search?q={query}"
-        feed_1=feedparser.parse(url_1)
+        A_url=f"https://news.google.com/rss/search?q={query}"
+        A_feed=feedparser.parse(A_url)
 
-        for entry_1 in feed_1.entries[:next_n]:
+        for entry in A_feed.entries[:Articles_No]:
             
-            title_1=entry_1.title
-            title_1=title_1.rsplit("-")
+            A_title=entry.title
+            A_title=A_title.rsplit("-")
             
-            title_emd=model.encode(title[0],convert_to_tensor=True)
-            title_1_emd=model.encode(title_1[0],convert_to_tensor=True)
-            Score=util.cos_sim(title_emd,title_1_emd)[0]
+            T_title_emd=model.encode(T_title[0],convert_to_tensor=True)
+            A_title_emd=model.encode(A_title[0],convert_to_tensor=True)
+            Score=util.cos_sim(T_title_emd,A_title_emd)[0]
             score = Score.item()
-            print(Score)
             
             if (score>0.65):
                 pass
             else:
                 continue
 
-            real_url = gnewsdecoder(entry_1.link)
+            real_url = gnewsdecoder(entry.link)
 
             try:
                     article=Article(real_url["decoded_url"], config=config)
                     article.download()
                     article.parse()
+
                     if article.text:
-                        print("Topic: ",title_1[0])
-                        schema["Sources"].append({"publisher":title_1[1],"text":article.text})
-                        value+=1
+                        schema["Sources"].append({"publisher":A_title[1],"text":article.text})
+                        Sources+=1
                     else:
-                        print("enone")
+                        print("else none")
                         continue
 
             except Exception:
-                    print("none")
+                    print("Exception none")
                     continue
             time.sleep(random.uniform(1, 3))
 
         if schema["Sources"]==[]:
                 continue
         
-        print("Total sources",value)
         trending_news.append(schema)
-        print(40*"-")
-        
-    print(trending_news)
+        print(Sources)    
+    print(trending_news)    
     return trending_news
        
 

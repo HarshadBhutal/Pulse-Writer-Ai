@@ -1,4 +1,3 @@
-// ---------- THEME ----------
 const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -25,7 +24,6 @@ themeToggle.addEventListener("click", () => {
   setTheme(current === "light" ? "dark" : "light");
 });
 
-// ---------- DATA ----------
 let articles = [];
 
 function initArticles() {
@@ -37,7 +35,6 @@ function initArticles() {
 
 document.addEventListener("pulse-articles-loaded", initArticles);
 
-// ---------- RENDER ----------
 const cardsContainer = document.getElementById("cardsContainer");
 const searchInput = document.getElementById("searchInput");
 
@@ -49,6 +46,31 @@ function makePreview(text, maxWords = 26) {
   return words.slice(0, maxWords).join(" ") + "…";
 }
 
+function formatDate(isoString) {
+  if (!isoString) return "Today";
+  
+  const date = new Date(isoString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const articleDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  
+  if (articleDate.getTime() === today.getTime()) {
+    return "Today";
+  }
+  
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (articleDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  }
+  
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+}
 
 function createCard(article) {
   const card = document.createElement("article");
@@ -66,7 +88,7 @@ function createCard(article) {
         <span>↗</span>
         <span>${split}</span>
       </span>
-      <span class="card-date">${"Today"}</span>
+      <span class="card-date">${formatDate(article.Created_at)}</span>
     </div>
       <h2 class="card-title">${article.Title}</h2>
       <p class="card-ai-label">AI summary from multiple sources</p>
@@ -89,7 +111,6 @@ function renderCards(list) {
 
 renderCards(articles);
 
-// ---------- SEARCH ----------
 function handleSearch() {
   const q = searchInput.value.toLowerCase().trim();
   articles = Array.isArray(window.PULSE_ARTICLES)

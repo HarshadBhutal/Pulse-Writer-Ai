@@ -1,1 +1,24 @@
+# Virtual environment
+venv/
+env/
 .venv/
+
+# Database (regenerate it)
+data.db
+
+# Python caches
+__pycache__/
+*.pyc
+backends/__pycache__/
+
+# Logs
+*.log
+logs/
+
+# VS Code (keep tasks.json if you have scheduler)
+.vscode/settings.json
+.vscode/launch.json
+
+# OS files
+.DS_Store
+Thumbs.db

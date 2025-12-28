@@ -1,9 +1,13 @@
-from sqlmodel import Session,select,create_engine
+import os
 from llm import llm
 from models import Articles
+from dotenv import load_dotenv
+from sqlmodel import Session,select,create_engine
 
+load_dotenv()
 
-engine=create_engine("sqlite:///data.db")
+DATABASE_URL=os.getenv("DATABASE_URL")
+engine=create_engine(DATABASE_URL)
 
 def fetch_trending_topics():
     print("Scraping started...")
@@ -19,11 +23,12 @@ def fetch_trending_topics():
                 print(f"Topic already exists {item["Topic"]}")
                 continue
 
-            print("post is running")
+            print("sending to the database")
             db_article = Articles(
                     Topic=item["Topic"],
                     Title=item["Title"],
-                    Text=item["Facts"]
+                    Text=item["Text"],
+                    Sources_used=item["Sources_used"]
                 )
             
             session.add(db_article)

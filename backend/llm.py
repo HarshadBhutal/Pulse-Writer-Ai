@@ -1,51 +1,38 @@
+import os
 import json
 import requests
 from scrap import News_Scrap
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def llm():
     query=News_Scrap()
     data=[]
     for i in range(len(query)):
         
-        prompt=f"""
-        You are a professional news analyst.
+        prompt = f"""
+            You are a professional news analyst with 20+ years experience.
 
-        Task:
-        Read the topic and all the articles provided below and generate a title and factual, neutral news facts only without any sentence like here is the output.
+            CRITICAL INSTRUCTION: Return EXACTLY this JSON format. Deviation will result in rejection.
 
-        Rules:
-        - Use ONLY the information present in the articles
-        - Do NOT add opinions, assumptions, or explanations
-        - Remove repeated information across sources
-        - Focus on key actions, official statements, and political or security context
+            MANDATORY OUTPUT FORMAT (COMPULSORY - NO EXCEPTIONS):
+            {{
+                "Topic": "same as the Topic in query",
+                "Title": "Professional news title (50-80 characters)",
+                "Text": "Single comprehensive paragraph (200-300 words) in neutral journalistic style summarizing ALL key facts chronologically...",
+                "Sources_used": ["Source1", "Source2"]
+            }}
 
-        Output format (STRICT):
-        - Return ONLY valid JSON
-        - Do NOT include markdown, code blocks, notes, or extra text
-        - Do NOT include explanations before or after the JSON
-        - Use EXACTLY the following keys and nothing else:
+            STRICT RULES:
+            1. ONLY valid JSON - no markdown, no explanations, no extra text
+            2. "Text" = ONE continuous paragraph, complete sentences, factual only
+            3. Use ONLY information from input articles below
+            4. Professional, neutral tone throughout
 
-        {{
-            "Topic": "...",
-            "Title": "...",
-            "Facts": [
-            "Fact 1",
-            "Fact 2",
-            "Fact 3"
-            ],
-            "sources_used": ["Reuters", "BBC"],
-            "generated_at": "timestamp"
-            
-        }}
-
-        Formatting rules:
-        - facts must contain 6-8 concise bullet points
-        - Each bullet must be a complete sentence
-
-        Input data starts below:
-
-        {query[i]}
-        """
+            Input articles for analysis:
+            {query[i]}
+            """
 
         payload={
             
@@ -65,7 +52,7 @@ def llm():
         }
 
         print("post request is going to start")
-        response=requests.post("http://127.0.0.1:11434/api/generate",headers=headers,json=payload)
+        response=requests.post(os.getenv("llm"),headers=headers,json=payload)
         response.raise_for_status()
         result = response.json()
         response_text = result["response"]
