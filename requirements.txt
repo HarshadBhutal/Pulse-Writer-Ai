@@ -8,3 +8,4 @@ apscheduler
 newspaper3k
 googlenewsdecoder
 sentence-transformers
+lxml_html_clean
