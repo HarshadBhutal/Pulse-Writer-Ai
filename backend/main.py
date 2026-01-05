@@ -6,7 +6,7 @@ from fastapi import FastAPI,staticfiles
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from scheduler import fetch_trending_topics,engine
-from sqlmodel import SQLModel,Session,select
+from sqlmodel import SQLModel,Session,select,desc
 from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
@@ -53,8 +53,11 @@ app.add_middleware(
 @app.get("/article/trending")
 def fetch_articles():
     with Session(engine) as session:
-        articles = session.exec(select(Articles)).all()
-        return articles
+         
+         statement = select(Articles).order_by(desc(Articles.Id))
+         latest_article = session.exec(statement).all()
+
+         return latest_article
     
 app.mount("/", staticfiles.StaticFiles(directory="../static", html=True), name="static")
 
