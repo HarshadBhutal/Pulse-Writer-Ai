@@ -1,8 +1,4 @@
 
-
-
----
-
 # Pulse Writer AI ✍️
 
 **Pulse Writer AI** is an AI-powered, scheduler-driven news aggregation and blog generation platform. It automatically collects trending topics from free RSS and web sources, aggregates 3-5 related articles per topic, and generates a unified, human-readable news blog using a local LLM (**LLaMA 3.2 via Ollama**). The system extracts information from the web, stores content in a **SQLite** database using **SQLModel**, and removes outdated topics through automated timestamp-based cleanup.
@@ -96,7 +92,16 @@ cd backend
 fastapi dev main.py
 
 ```
+---
 
+## ⚠️ Important: Stopping the Scheduler
+
+The scraper heartbeat is a background job that runs every 10 minutes.
+
+* **VS Code Users:** If you leave VS Code running in the background, the terminal process stays active. This means the scheduler will **continue to run every 10 minutes** even if you aren't actively using the editor.
+* **To stop the app completely:** You **must** use `Ctrl+C` in the terminal to kill the process. Simply minimizing or leaving VS Code open will keep the scraper active.
+
+---
 ---
 
 ## ⏱️ Orchestration Logic
