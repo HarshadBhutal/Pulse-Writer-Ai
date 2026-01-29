@@ -1,38 +1,42 @@
-import os
 from llm import llm
 from models import Articles
-from dotenv import load_dotenv
 from sqlmodel import Session,select,create_engine
 
-load_dotenv()
 
-DATABASE_URL=os.getenv("DATABASE_URL")
+DATABASE_URL="sqlite:///data.db"
 engine=create_engine(DATABASE_URL)
 
 def fetch_trending_topics():
     print("Scraping started...")
-    llm_data=llm()
-    for item in llm_data:
+    llm_data = llm()
+    
 
-        with Session(engine) as session:
-        
-            statement=select(Articles).where(Articles.Topic==item["Topic"])
-            existing=session.exec(statement).first()
+    with Session(engine) as session:
+        for item in llm_data:
+            try:
+                statement = select(Articles).where(Articles.Topic == item["topic"])
+                existing = session.exec(statement).first()
 
-            if existing:
-                print(f"Topic already exists {item["Topic"]}")
+                if existing:
+                    print(f"Topic already exists: {item['topic']}")
+                    continue
+
+                print(f"Adding to batch: {item['topic']}")
+                db_article = Articles(
+                    Topic=item["topic"],
+                    Title=item["title"],
+                    Text=item["text"],
+                    Sources_used=item["sources_used"]
+                )
+                
+                session.add(db_article)
+            
+            except (KeyError, TypeError) as e:
+                print(f"Skipping item due to bad JSON structure: {e}")
                 continue
 
-            print("sending to the database")
-            db_article = Articles(
-                    Topic=item["Topic"],
-                    Title=item["Title"],
-                    Text=item["Text"],
-                    Sources_used=item["Sources_used"]
-                )
-            
-            session.add(db_article)
-            session.commit()
-            session.refresh(db_article)
+        print("Committing all new articles to database...")
+        session.commit()
+        
     print("Scraping finished and database updated.")
 

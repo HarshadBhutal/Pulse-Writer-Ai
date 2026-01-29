@@ -1,15 +1,13 @@
 # Virtual environment
-venv/
-env/
 .venv/
 
 # Database (regenerate it)
-data.db
+backend/data.db/
 
 # Python caches
 __pycache__/
 *.pyc
-backends/__pycache__/
+backend/__pycache__/
 
 # Logs
 *.log

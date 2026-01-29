@@ -2,8 +2,6 @@ sqlmodel
 httpx
 fastapi[standard]
 requests
-feedparser
-dotenv
 apscheduler
 newspaper3k
 googlenewsdecoder

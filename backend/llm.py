@@ -18,10 +18,10 @@ def llm():
 
             MANDATORY OUTPUT FORMAT (COMPULSORY - NO EXCEPTIONS):
             {{
-                "Topic": "same as the Topic in query",
-                "Title": "Professional news title (50-80 characters)",
-                "Text": "Single comprehensive paragraph (200-300 words) in neutral journalistic style summarizing ALL key facts chronologically...",
-                "Sources_used": ["Source1", "Source2"]
+                "topic": "same as the Topic in query",
+                "title": "Professional news title (50-80 characters)",
+                "text": "Single comprehensive paragraph (200-300 words) in neutral journalistic style summarizing ALL key facts chronologically...",
+                "sources_used": ["Source1", "Source2"]
             }}
 
             STRICT RULES:
@@ -51,12 +51,11 @@ def llm():
             "Content-Type": "application/json"
         }
 
-        print("post request is going to start")
-        response=requests.post(os.getenv("llm"),headers=headers,json=payload)
+        
+        response=requests.post("http://127.0.0.1:11434/api/generate",headers=headers,json=payload)
         response.raise_for_status()
         result = response.json()
         response_text = result["response"]
-        print(response_text)
         data.append(json.loads(response_text))
         
     return data
