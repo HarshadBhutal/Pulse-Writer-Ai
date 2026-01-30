@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
 
     SQLModel.metadata.create_all(engine)
     scheduler=BackgroundScheduler()
-    scheduler.add_job(func=fetch_trending_topics, trigger="interval", minutes=6, id="scraper_job")
+    scheduler.add_job(func=fetch_trending_topics, trigger="interval", minutes=10, id="scraper_job")
     scheduler.start()
     print("INFO: Scheduler started.")
     yield 
