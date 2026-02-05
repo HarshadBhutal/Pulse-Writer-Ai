@@ -12,8 +12,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 async def lifespan(app: FastAPI):
 
     SQLModel.metadata.create_all(engine)
+
+    print("INFO: Running initial scrape...")
+    fetch_trending_topics()
+
     scheduler=BackgroundScheduler()
     scheduler.add_job(func=fetch_trending_topics, trigger="interval", minutes=10, id="scraper_job")
+    
     scheduler.start()
     print("INFO: Scheduler started.")
     yield 
