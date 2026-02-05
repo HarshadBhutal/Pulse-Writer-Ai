@@ -1,7 +1,7 @@
 
 # Pulse Writer AI ✍️
 
-**Pulse Writer AI** is an AI-powered, scheduler-driven news aggregation and blog generation platform. It automatically collects trending topics from free RSS and web sources, aggregates 3-5 related articles per topic, and generates a unified, human-readable news blog using a local LLM (**LLaMA 3.2 via Ollama**). The system extracts information from the web, stores content in a **SQLite** database using **SQLModel**, and removes outdated topics through automated timestamp-based cleanup.
+**Pulse Writer AI** is an AI-powered, scheduler-driven news aggregation and blog generation platform. It automatically collects trending topics from free RSS and web sources, aggregates 3-5 related articles per topic, and generates a unified, human-readable news blog using a local LLM (**LLaMA 3.2 via Ollama**). The system extracts information from the web, stores content in a **SQLite** database using **SQLModel**.
 
 ---
 <img width="1861" height="913" alt="image" src="https://github.com/user-attachments/assets/8566122f-6a68-4be1-b3f6-6a913e9ce9ed" />
