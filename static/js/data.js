@@ -2,23 +2,21 @@ window.PULSE_ARTICLES = [];
 
 async function loadPulseArticles() {
   try {
-
-    const res = await fetch("http://127.0.0.1:8000/article/trending");
+    const res = await fetch("/article/trending");
 
     if (!res.ok) {
-      console.error("Failed to load news:", res.status);
-      return;
+      throw new Error(`HTTP error: ${res.status}`);
     }
 
     const data = await res.json();
-    window.PULSE_ARTICLES = data;
-    localStorage.setItem("pulse-articles", JSON.stringify(articles));
-    document.dispatchEvent(new CustomEvent("pulse-articles-loaded"));
 
+    window.PULSE_ARTICLES = data;
+    localStorage.setItem("pulse-articles", JSON.stringify(data));
+
+    document.dispatchEvent(new CustomEvent("pulse-articles-loaded"));
   } catch (err) {
     console.error("Error loading news:", err);
   }
 }
 
 loadPulseArticles();
-

@@ -59,7 +59,7 @@ const dateEl = document.getElementById("articleDate");
 const params = new URLSearchParams(window.location.search);
 const idParam = params.get("id");
 
-const articles = Array.isArray(window.PULSE_ARTICLES) ? window.PULSE_ARTICLES : [];
+let articles = Array.isArray(window.PULSE_ARTICLES) ? window.PULSE_ARTICLES : [];
 
 if (!articles.length) {
   const stored = localStorage.getItem("pulse-articles");
